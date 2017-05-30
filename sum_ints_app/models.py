@@ -7,5 +7,5 @@ from django.contrib.postgres.fields import JSONField
 class Data(models.Model):
     input = JSONField()
     output = JSONField()
-    is_success = models.BooleanField(default=True)
-    error_message = models.TextField(default='')
+    is_success = models.BooleanField(default=False)
+    error_message = models.TextField(default='not-calculated')
