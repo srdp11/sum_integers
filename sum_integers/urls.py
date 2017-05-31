@@ -21,5 +21,5 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', views.render_main),
     url(r'^save_data/', views.save_data),
-    url(r'^run/', views.run),
+    url(r'^run_calculation/', views.run_calculation),
 ]
