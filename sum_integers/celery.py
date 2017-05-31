@@ -27,9 +27,9 @@ app.conf.task_queues = (
 )
 
 app.conf.task_routes = {
-    'sum_ints_app.tasks.load_data': {'queue': 'task_load', 'routing_key': 'task_load'},
-    'sum_ints_app.tasks.test_func': {'queue': 'task_handle', 'routing_key': 'task_handle'},
-    'sum_ints_app.tasks.save_result': {'queue': 'task_save', 'routing_key': 'task_save'},
+    'sum_ints_app.tasks.load_data': {'queue': 'task_load', 'exchange': 'task_load', 'routing_key': 'task_load'},
+    'sum_ints_app.tasks.test_func': {'queue': 'task_handle', 'exchange': 'task_handle', 'routing_key': 'task_handle'},
+    'sum_ints_app.tasks.save_result': {'queue': 'task_save', 'exchange': 'task_save', 'routing_key': 'task_save'},
 }
 
 
