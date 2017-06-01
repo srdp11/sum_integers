@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect
 from .forms import UploadFileForm
 from .models import Data
-from celery import chain
-from sum_integers.celery import app
-from .tasks import load_data, test_func, save_result
+from celery import chain, Task, result
+import time
+
+from .tasks import load_data, handle_data, save_result
 
 # Create your views here.
 
@@ -31,9 +32,20 @@ def save_data(request):
 
 
 def run_calculation(request):
+
     ids = [x for x in Data.objects.values_list('id', flat=True)]
 
+    chains = []
+
     for id in ids:
-        chain(load_data.s(id), test_func.s(), save_result.s(id))()
+        chains.append(chain(load_data.s(id),
+                            handle_data.s(id),
+                            save_result.s(id)
+                            )())
+
+    time.sleep(1)
+
+    for x in chains:
+        print(x.ready())
 
     return redirect('/')
