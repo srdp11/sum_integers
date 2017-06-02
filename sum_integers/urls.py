@@ -22,4 +22,5 @@ urlpatterns = [
     url(r'^$', views.render_main),
     url(r'^save_data/', views.save_data),
     url(r'^run_calculation/', views.run_calculation),
+    url(r'^last_status/', views.last_status),
 ]

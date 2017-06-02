@@ -1,12 +1,12 @@
 from __future__ import absolute_import, unicode_literals
 from sum_integers.celery import app
-from .models import Data, Result
+from .models import Data, Result, Run
 import json
 import numpy as np
 
 
 @app.task
-def handle_data(input, data_id):
+def handle_data(input, data_id, run_id):
     def test_func(data):
         json_data = json.loads(data)
 
@@ -27,7 +27,8 @@ def handle_data(input, data_id):
     try:
         return test_func(input)
     except Exception as ex:
-        Result.objects.create(input=Data.objects.get(id=data_id),
+        Result.objects.create(run=Run.objects.get(id=run_id),
+                              input=Data.objects.get(id=data_id),
                               output={},
                               is_success=False,
                               error_message=ex)
@@ -43,11 +44,12 @@ def load_data(data_id):
 
 
 @app.task
-def save_result(result, data_id):
+def save_result(result, data_id, run_id):
     if result is None:
         return
 
-    Result.objects.create(input=Data.objects.get(id=data_id),
+    Result.objects.create(run=Run.objects.get(id=run_id),
+                          input=Data.objects.get(id=data_id),
                           output=result,
                           is_success=True)
 
