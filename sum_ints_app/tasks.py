@@ -1,15 +1,8 @@
 from __future__ import absolute_import, unicode_literals
 from sum_integers.celery import app
-from .models import Data
+from .models import Data, Result
 import json
 import numpy as np
-from celery import Task, exceptions
-
-
-# class SafeTask(Task):
-#     def on_failure(self, exc, task_id, args, kwargs, einfo):
-#         print("lofodfoodfofdool")
-#         return {'error': exc}
 
 
 @app.task
@@ -34,13 +27,10 @@ def handle_data(input, data_id):
     try:
         return test_func(input)
     except Exception as ex:
-        data = Data.objects.get(id=data_id)
-
-        data.output = {}
-        data.is_success = False
-        data.error_message = ex
-
-        data.save()
+        Result.objects.create(input=Data.objects.get(id=data_id),
+                              output={},
+                              is_success=False,
+                              error_message=ex)
 
 
 @app.task
@@ -57,13 +47,9 @@ def save_result(result, data_id):
     if result is None:
         return
 
-    data = Data.objects.get(id=data_id)
+    Result.objects.create(input=Data.objects.get(id=data_id),
+                          output=result,
+                          is_success=True)
 
     print("data_id={}, result={}".format(data_id, result))
-
-    data.output = result
-    data.is_success = True
-    data.error_message = 'no errors'
-
-    data.save()
 

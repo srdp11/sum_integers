@@ -8,7 +8,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'sum_integers.settings')
 
 app = Celery('sum_integers',
              broker='pyamqp://guest@localhost//',
-             backend='amqp://')
+             backend='amqp://guest@localhost//')
 
 # Using a string here means the worker don't have to serialize
 # the configuration object to child processes.
