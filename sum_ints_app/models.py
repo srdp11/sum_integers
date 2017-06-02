@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.postgres.fields import JSONField
-from django.db.models.aggregates import Max
+import json
 
 # Create your models here.
 
@@ -9,30 +9,14 @@ class Data(models.Model):
     input = JSONField()
 
     def __str__(self):
-        return "id={}".format(self.id)
+        return "{}".format(self.input)
 
+    def __iter__(self):
+        replaced_json = json.loads(self.input)
 
-class ResultManager(models.Manager):
-    def last_result(self):
-        data_count = Data.objects.count()
-        result_count = self.count()
-
-        if data_count == 0 or result_count == 0:
-            return self.none()
-
-        result_data = self.all().order_by('id')
-
-        if result_count % data_count != 0:
-            result_data = result_data[:(result_data.count() - (result_count % data_count))]
-
-        return result_data.order_by('id')[:data_count]
-        # # for id in ids:
-        # #     obj = self.get(id=id).aggregate(Max('created_at'))
-        # #     result_data = result_data | obj
-        #
-        #
-        #
-        # return result_data
+        return iter([
+            ('input', replaced_json)
+        ])
 
 
 class Run(models.Model):
@@ -49,6 +33,14 @@ class Result(models.Model):
     is_success = models.NullBooleanField()
     error_message = models.TextField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def __iter__(self):
+        return iter([
+            ('input', dict(self.input)),
+            ('output', self.output),
+            ('is_success', self.is_success),
+            ('error_message', self.error_message)
+        ])
 
     def __str__(self):
         return "id={}, run={}, input={}, output={}, is_success={}, error={}".format(self.id,

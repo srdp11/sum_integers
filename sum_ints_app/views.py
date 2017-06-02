@@ -4,7 +4,9 @@ from .forms import UploadFileForm
 from .models import Data, Result, Run
 from celery import chain, group
 from .tasks import load_data, handle_data, save_result
-import time
+from django.core.serializers.json import DjangoJSONEncoder
+from django.core.serializers import serialize
+import json
 
 
 # Create your views here.
@@ -44,14 +46,16 @@ def run_calculation(request):
 
 
 def last_status(request):
-    last_run = Run.objects.latest('id')
-
     data_count = Data.objects.all().count()
 
     if data_count == 0:
         return JsonResponse({'last_run': 'False'})
 
+    last_run = Run.objects.latest('id')
     results = Result.objects.filter(run=last_run)
+
+    if results.count() == 0:
+        return JsonResponse({'last_run': 'False'})
 
     if data_count != results.count():
         results = Result.objects.get(run=Run.objects.get(id=(last_run.id - 1)))
@@ -63,4 +67,33 @@ def last_status(request):
 
 
 def last_results(request):
-    return 3
+    data_count = Data.objects.all().count()
+
+    if data_count == 0:
+        return JsonResponse({'results': 'null'})
+
+    last_run = Run.objects.latest('id')
+    results = Result.objects.filter(run=last_run)
+
+    if results.count() == 0:
+        return JsonResponse({'results': 'null'})
+
+    results = Result.objects.filter(run=last_run)
+
+    json_results = []
+    for x in results:
+        json_results.append(dict(x))
+    
+    # if we have some non-complete tasks
+    if data_count > results.count():
+        complete_data_ids = [x[0] for x in list(results.values_list('input'))]
+        all_data_id = [x[0] for x in list(Data.objects.all().values_list('id'))]
+        non_complete_tasks_id = [x for x in all_data_id if x not in complete_data_ids]
+
+        non_complete_tasks = Result.objects.filter(run=(last_run.id - 1)).filter(input__in=non_complete_tasks_id)
+
+        if non_complete_tasks.exists():
+            for x in non_complete_tasks:
+                json_results.append(dict(x))
+
+    return JsonResponse(json_results, safe=False)

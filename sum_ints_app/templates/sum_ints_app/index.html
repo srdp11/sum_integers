@@ -10,13 +10,16 @@
             {% csrf_token %}
             <input type="file" name="file" multiple="multiple"/>
             <br/>
-            <input type="submit" value="Upload File" />
+            <input type="submit" value="Upload Files" />
         </form>
         <form action="run_calculation/" method="GET">
             <input type="submit" value="Run" />
         </form>
         <form action="last_status/" method="GET">
             <input type="submit" value="Last status" />
+        </form>
+        <form action="last_result/" method="GET">
+            <input type="submit" value="Last result" />
         </form>
     </body>
 </html>
