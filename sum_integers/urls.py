@@ -24,4 +24,5 @@ urlpatterns = [
     url(r'^run_calculation/', views.run_calculation),
     url(r'^last_status/', views.last_status),
     url(r'^last_result/', views.last_results),
+    url(r'^clear/', views.clear),
 ]

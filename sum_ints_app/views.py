@@ -31,6 +31,7 @@ def save_data(request):
 
         print(Data.objects.all())
         print(Result.objects.all())
+        print(Run.objects.all())
 
     return redirect('/')
 
@@ -46,9 +47,9 @@ def run_calculation(request):
 
 
 def last_status(request):
-    data_count = Data.objects.all().count()
+    data_count = Data.objects.count()
 
-    if data_count == 0:
+    if data_count == 0 or Run.objects.count() == 0:
         return JsonResponse({'last_run': 'False'})
 
     last_run = Run.objects.latest('id')
@@ -58,7 +59,10 @@ def last_status(request):
         return JsonResponse({'last_run': 'False'})
 
     if data_count != results.count():
-        results = Result.objects.get(run=Run.objects.get(id=(last_run.id - 1)))
+        if Run.objects.count() > 1:
+            results = Result.objects.filter(run=Run.objects.get(id=(last_run.id - 1)))
+        else:
+            return JsonResponse({'last_run': 'False'})
 
     if results.filter(is_success=False).count() > 0:
         return JsonResponse({'last_run': 'False'})
@@ -67,9 +71,9 @@ def last_status(request):
 
 
 def last_results(request):
-    data_count = Data.objects.all().count()
+    data_count = Data.objects.count()
 
-    if data_count == 0:
+    if data_count == 0 or Run.objects.count() == 0:
         return JsonResponse({'results': 'null'})
 
     last_run = Run.objects.latest('id')
@@ -83,7 +87,7 @@ def last_results(request):
     json_results = []
     for x in results:
         json_results.append(dict(x))
-    
+
     # if we have some non-complete tasks
     if data_count > results.count():
         complete_data_ids = [x[0] for x in list(results.values_list('input'))]
@@ -97,3 +101,11 @@ def last_results(request):
                 json_results.append(dict(x))
 
     return JsonResponse(json_results, safe=False)
+
+
+def clear(request):
+    Data.objects.all().delete()
+    Result.objects.all().delete()
+    Run.objects.all().delete()
+
+    return redirect('/')
