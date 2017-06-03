@@ -1,7 +1,6 @@
 *.pid
 *.log
-sum_integers/__pycache__/
-sum_ints_app/__pycache__/
 virtual_env/
 .idea/
+__pycache__/
 
