@@ -117,3 +117,13 @@ def clear(request):
     Run.objects.all().delete()
 
     return redirect('/')
+
+
+def get_input_data(request):
+    input = Data.objects.all()
+
+    json_results = []
+    for x in input:
+        json_results.append(dict(x))
+
+    return JsonResponse({'input_data': json_results}, safe=False)

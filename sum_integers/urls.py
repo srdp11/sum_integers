@@ -25,4 +25,5 @@ urlpatterns = [
     url(r'^last_status/', views.last_status),
     url(r'^last_result/', views.last_results),
     url(r'^clear/', views.clear),
+    url(r'^get_input_data/', views.get_input_data),
 ]
