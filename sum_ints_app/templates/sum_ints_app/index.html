@@ -5,24 +5,30 @@
         <link rel="stylesheet" href="{% static 'sum_ints_app/application.css' %}" />
     </head>
     <body>
-        <h1>Function test</h1>
-        <form action="save_data/" method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
-            <input type="file" name="file" multiple="multiple"/>
-            <br/>
-            <input type="submit" value="Upload Files" />
-        </form>
-        <form action="run_calculation/" method="GET">
-            <input type="submit" value="Run" />
-        </form>
-        <form action="last_status/" method="GET">
-            <input type="submit" value="Last status" />
-        </form>
-        <form action="last_result/" method="GET">
-            <input type="submit" value="Last result" />
-        </form>
-        <form action="clear/" method="GET">
-            <input type="submit" value="Clear data and results" />
-        </form>
+        <h1>Backend test</h1>
+        <label>Data load</label>
+
+            <form action="save_data/" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="file" id="choose-file" name="file" multiple="multiple"/>
+                <br/>
+                <input type="submit" id="upload" value="Upload Files" />
+            </form>
+
+        <div class="api">
+            <label>Api command</label>
+            <form action="run_calculation/" method="GET">
+                <input type="submit" value="Run function" />
+            </form>
+            <form action="last_status/" method="GET">
+                <input type="submit" value="Last status" />
+            </form>
+            <form action="last_result/" method="GET">
+                <input type="submit" value="Last result" />
+            </form>
+            <form action="clear/" method="GET">
+                <input type="submit" value="Clear data and results" />
+            </form>
+        </div>
     </body>
 </html>

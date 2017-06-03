@@ -1,3 +1,31 @@
 h1 {
-    text-align: center;
+    text-align: left;
 }
+
+.data {
+    margin-top: 10px;
+}
+
+form {
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+.api {
+    margin-top: 15px;
+}
+
+input[type=submit] {
+    width: 12em;
+    height: 2em;
+}
+
+#upload {
+    width: 82px;
+}
+
+#choose-file {
+    width: 200px;
+}
+
+
