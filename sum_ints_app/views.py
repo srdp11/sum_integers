@@ -20,14 +20,22 @@ def save_data(request):
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
 
-        if form.is_valid():
-
+        try:
             for file in request.FILES.getlist('file'):
                 file.seek(0)
                 json_array_str = file.read().decode('utf-8')
                 Data.objects.create(input=json_array_str)
-        else:
-            print(form.errors)
+        except Exception as ex:
+            return JsonResponse({'error': str(ex)})
+
+
+        # if form.is_valid():
+        #     for file in request.FILES.getlist('file'):
+        #         file.seek(0)
+        #         json_array_str = file.read().decode('utf-8')
+        #         Data.objects.create(input=json_array_str)
+        # else:
+        #     print(form.errors)
 
         print(Data.objects.all())
         print(Result.objects.all())
